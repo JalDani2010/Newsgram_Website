@@ -85,7 +85,7 @@ app.use("/api/auth", authRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/news", newsRoutes)
 app.use("/api/comments", commentRoutes)
-//app.use("/api/bookmarks", bookmarkRoutes)
+app.use("/api/bookmarks", bookmarkRoutes)
 app.use("/api/categories", categoryRoutes)
 
 // Health check endpoint

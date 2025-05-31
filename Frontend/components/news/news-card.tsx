@@ -1,37 +1,36 @@
-"use client"
+import type React from "react";
 
-import type React from "react"
-
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import { formatDistanceToNow } from "date-fns"
-import { Bookmark, Share2, Eye, MessageSquare } from "lucide-react"
-import { useBookmarks } from "@/lib/hooks/use-bookmarks"
-import type { Article } from "@/lib/types"
-import { Button } from "@/components/ui/button"
-import { CATEGORIES } from "@/lib/constants"
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { formatDistanceToNow } from "date-fns";
+import { Bookmark, Share2, Eye, MessageSquare } from "lucide-react";
+import { useBookmarks } from "@/lib/hooks/use-bookmarks";
+import type { Article } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { CATEGORIES } from "@/lib/constants";
 
 interface NewsCardProps {
-  article: Article
+  article: Article;
 }
 
 export function NewsCard({ article }: NewsCardProps) {
-  const { isBookmarked, toggleBookmark } = useBookmarks()
-  const [imageLoaded, setImageLoaded] = useState(false)
+  const { isBookmarked, toggleBookmark } = useBookmarks();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  const categoryName = CATEGORIES.find((cat) => cat.id === article.category)?.name || ""
+  const categoryName =
+    CATEGORIES.find((cat) => cat.id === article.category)?.name || "";
 
   const handleBookmarkClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    toggleBookmark(article.id)
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    toggleBookmark(article.id);
+  };
 
   const handleShareClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+    e.preventDefault();
+    e.stopPropagation();
 
     if (navigator.share) {
       navigator
@@ -40,23 +39,25 @@ export function NewsCard({ article }: NewsCardProps) {
           text: article.description,
           url: `/article/${article.id}`,
         })
-        .catch(console.error)
+        .catch(console.error);
     } else {
       // Fallback for browsers that don't support the Web Share API
-      navigator.clipboard.writeText(window.location.origin + `/article/${article.id}`)
-      alert("Link copied to clipboard!")
+      navigator.clipboard.writeText(
+        window.location.origin + `/article/${article.id}`
+      );
+      alert("Link copied to clipboard!");
     }
-  }
+  };
 
   // Format view count for display
   const formatViewCount = (count: number): string => {
     if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`
+      return `${(count / 1000000).toFixed(1)}M`;
     } else if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}K`
+      return `${(count / 1000).toFixed(1)}K`;
     }
-    return count.toString()
-  }
+    return count.toString();
+  };
 
   return (
     <motion.div
@@ -74,7 +75,9 @@ export function NewsCard({ article }: NewsCardProps) {
             src={article.imageUrl || "/placeholder.svg?height=200&width=400"}
             alt={article.title}
             fill
-            className={`object-cover transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+            className={`object-cover transition-opacity duration-300 ${
+              imageLoaded ? "opacity-100" : "opacity-0"
+            }`}
             onLoad={() => setImageLoaded(true)}
           />
           {categoryName && (
@@ -85,12 +88,20 @@ export function NewsCard({ article }: NewsCardProps) {
         </div>
 
         <div className="p-4">
-          <h3 className="mb-2 line-clamp-2 text-xl font-semibold group-hover:text-primary">{article.title}</h3>
-          <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{article.description}</p>
+          <h3 className="mb-2 line-clamp-2 text-xl font-semibold group-hover:text-primary">
+            {article.title}
+          </h3>
+          <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
+            {article.description}
+          </p>
 
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <div className="flex items-center">
-              <span>{formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true })}</span>
+              <span>
+                {formatDistanceToNow(new Date(article.publishedAt), {
+                  addSuffix: true,
+                })}
+              </span>
               <span className="mx-2">•</span>
               <span>{article.source}</span>
             </div>
@@ -113,9 +124,17 @@ export function NewsCard({ article }: NewsCardProps) {
                 size="icon"
                 className="h-8 w-8"
                 onClick={handleBookmarkClick}
-                aria-label={isBookmarked(article.id) ? "Remove from bookmarks" : "Add to bookmarks"}
+                aria-label={
+                  isBookmarked(article.id)
+                    ? "Remove from bookmarks"
+                    : "Add to bookmarks"
+                }
               >
-                <Bookmark className={`h-4 w-4 ${isBookmarked(article.id) ? "fill-primary text-primary" : ""}`} />
+                <Bookmark
+                  className={`h-4 w-4 ${
+                    isBookmarked(article.id) ? "fill-primary text-primary" : ""
+                  }`}
+                />
               </Button>
 
               <Button
@@ -132,15 +151,19 @@ export function NewsCard({ article }: NewsCardProps) {
         </div>
       </Link>
     </motion.div>
-  )
+  );
 }
 
-function LoadingSpinner({ size = "default" }: { size?: "default" | "sm" | "lg" }) {
+function LoadingSpinner({
+  size = "default",
+}: {
+  size?: "default" | "sm" | "lg";
+}) {
   const sizeClasses = {
     default: "h-8 w-8",
     sm: "h-5 w-5",
     lg: "h-12 w-12",
-  }
+  };
 
   return (
     <div className="flex items-center justify-center">
@@ -148,5 +171,5 @@ function LoadingSpinner({ size = "default" }: { size?: "default" | "sm" | "lg" }
         className={`animate-spin rounded-full border-2 border-current border-t-transparent text-primary ${sizeClasses[size]}`}
       />
     </div>
-  )
+  );
 }
