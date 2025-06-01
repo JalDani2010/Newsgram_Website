@@ -54,8 +54,6 @@ class OptimizedNewsService {
    * Uses a background job to fetch category news, then updates trending & cleans up old articles.
    */
   async fetchAndStoreNews() {
-    console.log("Starting optimized news fetch and store process...");
-
     try {
       // Fetch news in the background (non-blocking for UI)
       await this.fetchNewsInBackground();
@@ -63,8 +61,6 @@ class OptimizedNewsService {
       // After background fetch, update trending and clean up old articles
       await this.updateTrendingArticles();
       await this.cleanupOldArticles();
-
-      console.log("Optimized news fetch and store process completed");
     } catch (error) {
       console.error("Error in fetchAndStoreNews:", error);
     }
@@ -319,8 +315,6 @@ class OptimizedNewsService {
           { isTrending: true }
         );
       }
-
-      console.log(`Updated ${trendingIds.length} trending articles`);
     } catch (error) {
       console.error("Error updating trending articles:", error);
     }
@@ -337,8 +331,6 @@ class OptimizedNewsService {
         publishedAt: { $lt: thirtyDaysAgo },
         viewCount: { $lt: 10 },
       });
-
-      console.log(`Cleaned up ${result.deletedCount} old articles`);
     } catch (error) {
       console.error("Error cleaning up old articles:", error);
     }

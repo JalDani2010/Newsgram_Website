@@ -327,10 +327,6 @@ router.post("/deactivate", auth, async (req, res) => {
 // @desc    Delete user account permanently
 // @access  Private
 router.delete("/account", auth, async (req, res) => {
-  console.log("🎯 DELETE /account route hit")
-  console.log("🔍 User ID from auth:", req.user._id)
-  console.log("🔍 Request body:", req.body)
-
   try {
     const { password } = req.body
 
@@ -342,14 +338,9 @@ router.delete("/account", auth, async (req, res) => {
         message: "Password is required to delete account",
       })
     }
-
-    console.log("🔍 Password received:", password ? "Present" : "Missing")
-
     // IMPORTANT: Explicitly select the password field
     const user = await User.findById(req.user._id).select("+password")
-    console.log("👤 User found:", user ? "YES" : "NO")
-    console.log("🔐 User password hash:", user?.password ? "Present" : "Missing")
-
+    
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -367,9 +358,8 @@ router.delete("/account", auth, async (req, res) => {
     }
 
     // Verify password
-    console.log("🔐 Comparing passwords...")
     const isMatch = await bcrypt.compare(password, user.password)
-    console.log("🔐 Password match:", isMatch)
+    
 
     if (!isMatch) {
       return res.status(400).json({
@@ -377,8 +367,6 @@ router.delete("/account", auth, async (req, res) => {
         message: "Incorrect password",
       })
     }
-
-    console.log("🗑️ Starting account deletion...")
 
     // Delete user data
     await Promise.all([
@@ -396,8 +384,6 @@ router.delete("/account", auth, async (req, res) => {
         // Don't fail the entire operation for this
       }
     }
-
-    console.log("✅ Account deletion completed")
 
     res.json({
       success: true,
